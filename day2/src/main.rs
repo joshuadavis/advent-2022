@@ -1,44 +1,45 @@
 extern crate core;
 
 use std::fs;
-use crate::Choice::{PAPER, ROCK, SCISSORS};
+use crate::Choice::*;
+use crate::Outcome::*;
 
 #[derive(Debug, Copy, Clone)]
 enum Choice {
-    ROCK,
-    PAPER,
-    SCISSORS
+    ROCK = 1,
+    PAPER = 2,
+    SCISSORS = 3
 }
 
 #[derive(Debug, Copy, Clone)]
 enum Outcome {
-    WIN,
-    LOSE,
-    DRAW
+    WIN = 6,
+    LOSE = 0,
+    DRAW = 3
 }
 
 // Computes the outcome.
 fn outcome(a: Choice, b: Choice) -> Outcome {
     match a {
-        Choice::ROCK => {
+        ROCK => {
             match b {
-                Choice::ROCK => { Outcome::DRAW }
-                Choice::PAPER => { Outcome::LOSE }
-                Choice::SCISSORS => { Outcome::WIN }
+                ROCK => { DRAW }
+                PAPER => { LOSE }
+                SCISSORS => { WIN }
             }
         }
-        Choice::PAPER => {
+        PAPER => {
             match b {
-                Choice::ROCK => { Outcome::WIN }
-                Choice::PAPER => { Outcome::DRAW }
-                Choice::SCISSORS => { Outcome::LOSE }
+                ROCK => { WIN }
+                PAPER => { DRAW }
+                SCISSORS => { LOSE }
             }
         }
-        Choice::SCISSORS => {
+        SCISSORS => {
             match b {
-                Choice::ROCK => { Outcome::LOSE }
-                Choice::PAPER => { Outcome::WIN }
-                Choice::SCISSORS => { Outcome::DRAW }
+                ROCK => { LOSE }
+                PAPER => { WIN }
+                SCISSORS => { DRAW }
             }
         }
     }
@@ -46,25 +47,15 @@ fn outcome(a: Choice, b: Choice) -> Outcome {
 
 // Computes the score based on the outcome.
 fn outcome_score(a: Choice, b: Choice) -> i32 {
-    match outcome(a, b) {
-        Outcome::WIN => { 6 }
-        Outcome::DRAW => { 3 }
-        Outcome::LOSE => { 0 }
-    }
-}
-
-// Computes the part of the score based on the choice.
-fn choice_score(c: Choice) -> i32 {
-    match c {
-        Choice::ROCK => { 1 }
-        Choice::PAPER => { 2 }
-        Choice::SCISSORS => { 3 }
-    }
+    outcome(a, b) as i32
 }
 
 // Computes the total score for 'a' (in a vs b)
 fn score(a: Choice, b:Choice) -> i32 {
-    choice_score(a) + outcome_score(a , b)
+    // Choice discriminator is the score for the choice.
+    // Outcome discriminator is the score for the outcome.
+    // In Rust, enum discriminators are i32 by default, so we just cast them to get the value.
+    a as i32 + outcome(a , b) as i32
 }
 
 fn decode_opponent(s: &str) -> Choice {
